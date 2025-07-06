@@ -21,8 +21,9 @@ export default function FileUploadSection() {
         `/api/s3url?filename=${file.name}&filetype=${file.type}`
       );
       const { uploadUrl } = await res.json();
-
-      const uploadRes = await fetch(url, {
+      console.log(file, "file");
+      console.log(uploadUrl, "uploadurl");
+      const uploadRes = await fetch(uploadUrl, {
         method: "PUT",
         headers: {
           "Content-Type": file.type,

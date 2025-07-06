@@ -16,21 +16,72 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## ✅ Step 1: Create an S3 Bucket
+Go to the AWS Console → S3.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Click Create Bucket.
 
-## Learn More
+Optional: If uploading public assets, uncheck:
+Block all public access.
 
-To learn more about Next.js, take a look at the following resources:
+After the bucket is created, set CORS Configuration:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+S3 → Permissions → CORS configuration → Paste this:
+```
+[
+  {
+    "AllowedHeaders": ["*"],
+    "AllowedMethods": ["GET", "POST", "PUT"],
+    "AllowedOrigins": ["*"],
+    "ExposeHeaders": [],
+    "MaxAgeSeconds": 3000
+  }
+]
+```
+## ✅ Step 2: Create an IAM User with S3 Access
+Go to AWS Console → IAM → Users.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Click Add user.
 
-## Deploy on Vercel
+Set a name (e.g., s3-uploader-user).
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Select Access key - Programmatic access.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Click Next → Attach policies directly.
+
+✅ Attach: AmazonS3FullAccess.
+
+## ✅ Step 3: (Optional) Add Bucket Policy for Public Read Access
+If you want files accessible via public URLs:
+
+S3 → Permissions → Bucket Policy → Paste this:
+```
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "PublicReadForObjects",
+      "Effect": "Allow",
+      "Principal": "*",
+      "Action": "s3:GetObject",
+      "Resource": "arn:aws:s3:::<your-bucket-name>/*"
+    }
+  ]
+}
+
+```
+⚠️ Replace <your-bucket-name> with your actual bucket name.
+
+## ✅ Step 4: Install AWS SDK
+
+```
+npm install aws-sdk
+
+```
+
+🎉 You’re all set! Now you can start building your file upload features.
+
+![image](https://github.com/user-attachments/assets/2ed497e9-a61f-4aa3-999f-7ef7f8d2e2fd)
+
+![image](https://github.com/user-attachments/assets/f8cea217-39ca-4556-b6d1-c4081f4935ae)
+
